@@ -1,4 +1,33 @@
 import mongoose from 'mongoose'
 
-const itemSchema = new mongoose.Schema({}, { timestamps: true })
+const itemSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 50
+    },
+    status: {
+      type: String,
+      required: true,
+      default: 'active',
+      enum: ['active', 'complete', 'pastdue']
+    },
+    notes: String,
+    due: Date,
+    createdBy: {
+      ref: 'user',
+      required: true,
+      type: mongoose.SchemaType.ObjectId
+    },
+    list: {
+      ref: 'list',
+      required: true,
+      type: mongoose.SchemaType.ObjectId
+    }
+  },
+  { timestamps: true }
+)
+itemSchema.index({ list: 1, name: 1 }, { unique: true })
 export const Item = mongoose.model('item', itemSchema)
